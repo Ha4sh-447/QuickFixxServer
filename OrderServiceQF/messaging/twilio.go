@@ -18,7 +18,7 @@ func TwilioServeSms(orderProto *models.KafkaMsg) error {
 		log.Println("ENVFILE", err)
 	}
 
-	body := fmt.Sprintf("QuickFixx- %s is interested in your service, connect with him ", orderProto.Contact)
+	body := fmt.Sprintf("QuickFixx- %s is interested in your service. Connect- %s ", orderProto.Username, orderProto.Contact)
 
 	accountSID := os.Getenv("TWILIO_SID")
 	authToken := os.Getenv("TWILIO_AUTH_TOKEN")

@@ -42,4 +42,5 @@ type UserOrderProd struct {
 type KafkaMsg struct {
 	UserOrderProd
 	ServiceProd
+	Username string `json:"username"`
 }

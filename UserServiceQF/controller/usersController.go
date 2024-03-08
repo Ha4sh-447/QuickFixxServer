@@ -151,20 +151,50 @@ func (u *UserCont) PostOrder(ctx *gin.Context) {
 		return
 	}
 
-	sp, err := u.GetSpDetails(int32(userorder.ServiceId), userorder.Field)
-	if err != nil {
-		log.Println("ERROR SP", err)
+	// Fetch data in parallel
+	type Result struct {
+		SP       *models.ServiceProd
+		Username string
+		Err      error
+	}
+	resultCh := make(chan Result, 2) // Buffer for 2 results
+
+	go func() {
+		sp, err := u.GetSpDetails(int32(userorder.ServiceId), userorder.Field)
+		resultCh <- Result{SP: sp, Err: err}
+	}()
+
+	go func() {
+		username, err := u.Repo.GetUserNameById(int32(userorder.UserId))
+		resultCh <- Result{Username: username, Err: err}
+	}()
+
+	// Wait for both results
+	var sp *models.ServiceProd
+	var username string
+	for i := 0; i < 2; i++ {
+		result := <-resultCh
+		if result.Err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch data"})
+			return
+		}
+		if result.SP != nil {
+			sp = result.SP
+		}
+		if result.Username != "" {
+			username = result.Username
+		}
 	}
 
 	kafkaOrder := models.KafkaMsg{
 		UserOrderProd: userorder,
 		ServiceProd:   *sp,
+		Username:      username,
 	}
 
-	err = kafka.SendKafkaMessage(*u.producer, kafkaOrder)
-
+	err := kafka.SendKafkaMessage(*u.producer, kafkaOrder)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send Kafka message"})
 		return
 	}
 

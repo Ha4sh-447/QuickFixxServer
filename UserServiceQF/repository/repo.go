@@ -133,3 +133,17 @@ func (r *Repo) GetSpDetails(spId int32, field string) (*models.ServiceProd, erro
 
 	return &sp, nil
 }
+
+func (r *Repo) GetUserNameById(id int32) (string, error) {
+	tx := r.repo.MustBegin()
+
+	result := tx.QueryRow("SELECT name FROM t_usersdb WHERE id=?", id)
+	var name string
+	err := result.Scan(&name)
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+
+	return name, nil
+}
