@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"log"
 
+	jsoniter "github.com/json-iterator/go"
+
 	"github.com/IBM/sarama"
 )
 
@@ -17,11 +19,7 @@ const (
 	KafkaServerAddy = "localhost:9092"
 )
 
-type UserOrders map[string]models.UserOrderProd
-
-type TempOrderStore struct {
-	orders models.UserOrderProd
-}
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func InitializeConsumer() (sarama.Consumer, error) {
 	config := sarama.NewConfig()
@@ -60,7 +58,15 @@ func SetupConsumerGroup(ctx context.Context, order models.UserOrderProd) {
 		case msg := <-partionConsumer.Messages():
 			// kafka dm's me
 			log.Println("Received message:", string(msg.Key), string(msg.Value))
-			messaging.SendMessage("")
+			var order models.KafkaMsg
+			if err := json.Unmarshal(msg.Value, &order); err != nil {
+				log.Println("ERROR DECODING MESSAGE", err)
+			}
+			err = messaging.TwilioServeSms(&order)
+			if err != nil {
+				log.Println("TWILIO ERROR", err)
+			}
+			messaging.SendMessage("", string(order.Name), string(order.DateOrdered))
 		}
 	}
 }

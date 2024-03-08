@@ -17,12 +17,17 @@ type Orders struct {
 	Status      int    `json:"status"`
 }
 
-type OrderResponse struct {
-	UserName   string `json:"user_name"`
-	ProName    string `json:"pro_name"`
-	ProContact string `json:"pro_contact"`
-	ProServ    string `json:"pro_service"`
-	ProRating  string `json:"pro_rating"`
+type ServiceProd struct {
+	Id            int     `json:"id"`
+	Address       string  `json:"address"`
+	Contact       string  `json:"contact"`
+	Name          string  `json:"name"`
+	Experience    string  `json:"experience"`
+	Qualification []uint8 `json:"qualification"`
+	// Qualification  interface{} `json:"qualification"`
+	Location       string `json:"location"`
+	Rating         int    `json:"rating"`
+	Specialization string `json:"specialization"`
 }
 
 type UserOrderProd struct {
@@ -32,4 +37,9 @@ type UserOrderProd struct {
 	OrderId     string `json:"orderid"`
 	DateOrdered string `json:"dateOrdered"`
 	Status      int    `json:"status"`
+}
+
+type KafkaMsg struct {
+	UserOrderProd
+	ServiceProd
 }
