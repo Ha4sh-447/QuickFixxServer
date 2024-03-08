@@ -2,6 +2,7 @@ package messaging
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
@@ -12,7 +13,7 @@ import (
 	"google.golang.org/api/option"
 )
 
-func SendMessage(token string) (string, error) {
+func SendMessage(token string, spName string, date string) (string, error) {
 
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -30,13 +31,25 @@ func SendMessage(token string) (string, error) {
 		log.Println("ERROR MESSAGING", err)
 	}
 
+	// parsedDate, err := time.Parse("2006-01-02", date)
+	// if err != nil {
+	// 	return "", fmt.Errorf("error parsing date: %v", err)
+	// }
+
+	// // Format the date in a human-readable format
+	// formattedDate := parsedDate.Format("Monday, January 2, 2006")
+
+	body := fmt.Sprintf("%s will contact you shortly", spName)
+
 	message := &messaging.Message{
 		Notification: &messaging.Notification{
-			Title: "Hello from go server",
-			Body:  "THIS IS YOUR BODY",
+			Title: "Quickfixx",
+			Body:  body,
 		},
 		Token: os.Getenv("DEVICE_TOKEN"), //just a work around
 	}
+
+	fmt.Println(os.Getenv("DEVICE_TOKEN"))
 
 	response, err := fcmApp.Send(context.Background(), message)
 	if err != nil {
