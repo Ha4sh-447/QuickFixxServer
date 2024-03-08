@@ -3,9 +3,11 @@ package repository
 import (
 	"UserServiceQF/dto"
 	"UserServiceQF/models"
+	"fmt"
+	"log"
+
 	"github.com/jmoiron/sqlx"
 	logr "github.com/sirupsen/logrus"
-	"log"
 )
 
 type Repo struct {
@@ -93,4 +95,41 @@ func (r *Repo) UpdateUsr(user *models.Users) error {
 	}
 
 	return nil
+}
+
+func (r *Repo) GetSpDetails(spId int32, field string) (*models.ServiceProd, error) {
+
+	var table string
+
+	switch field {
+	case "electrician":
+		// port = "8080"
+		table = "t_electriciandb"
+	case "plumber":
+		// port = "8083"
+		table = "t_plumbers"
+	case "carpenter":
+		// port = "8082"
+		table = "t_carpenter"
+	case "housekeeping":
+		// port = "joemama"
+		table = "t_housekeeping"
+	}
+
+	// call := fmt.Sprintf("http://localhost:%s/api/%s/%d", port, field, spId)
+	// log.Println(call)
+
+	tx := r.repo.MustBegin()
+	defer tx.Rollback()
+	log.Println("INPUTS", spId, field)
+	var sp models.ServiceProd
+	query := fmt.Sprintf("SELECT * FROM %s WHERE id=?", table)
+
+	err := tx.Get(&sp, query, spId)
+	log.Println("SP DETAILS", sp)
+	if err != nil {
+		return nil, err
+	}
+
+	return &sp, nil
 }

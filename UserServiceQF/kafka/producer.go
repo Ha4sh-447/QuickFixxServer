@@ -25,9 +25,10 @@ func SetupProducer() (sarama.SyncProducer, error) {
 	return producer, nil
 }
 
-func SendKafkaMessage(producer sarama.SyncProducer, order models.UserOrderProd) error {
+func SendKafkaMessage(producer sarama.SyncProducer, order models.KafkaMsg) error {
 
 	orderJSON, err := json.Marshal(&order)
+	log.Println("USERORDER", orderJSON)
 	if err != nil {
 		log.Println("Kafka producer JSON error", err)
 		return err

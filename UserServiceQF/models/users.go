@@ -18,3 +18,8 @@ type UserOrderProd struct {
 	DateOrdered string `json:"dateOrdered"`
 	Status      int    `json:"status"`
 }
+
+type KafkaMsg struct {
+	UserOrderProd
+	ServiceProd
+}

@@ -130,19 +130,19 @@ func (u *UserCont) UpdateUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, dto.Response{Message: "User updated successfully"})
 }
 
-func (u *UserCont) CreateUserOrderHandler(producer sarama.SyncProducer, userorder models.UserOrderProd) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+// func (u *UserCont) CreateUserOrderHandler(producer sarama.SyncProducer, userorder models.UserOrderProd) gin.HandlerFunc {
+// 	return func(ctx *gin.Context) {
 
-		err := kafka.SendKafkaMessage(producer, userorder)
+// 		err := kafka.SendKafkaMessage(producer, userorder)
 
-		if err != nil {
-			ctx.JSON(http.StatusNotFound, err)
-			return
-		}
+// 		if err != nil {
+// 			ctx.JSON(http.StatusNotFound, err)
+// 			return
+// 		}
 
-		ctx.JSON(http.StatusOK, gin.H{"message": "Message sent"})
-	}
-}
+// 		ctx.JSON(http.StatusOK, gin.H{"message": "Message sent"})
+// 	}
+// }
 
 func (u *UserCont) PostOrder(ctx *gin.Context) {
 	var userorder models.UserOrderProd
@@ -151,7 +151,17 @@ func (u *UserCont) PostOrder(ctx *gin.Context) {
 		return
 	}
 
-	err := kafka.SendKafkaMessage(*u.producer, userorder)
+	sp, err := u.GetSpDetails(int32(userorder.ServiceId), userorder.Field)
+	if err != nil {
+		log.Println("ERROR SP", err)
+	}
+
+	kafkaOrder := models.KafkaMsg{
+		UserOrderProd: userorder,
+		ServiceProd:   *sp,
+	}
+
+	err = kafka.SendKafkaMessage(*u.producer, kafkaOrder)
 
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, err)
