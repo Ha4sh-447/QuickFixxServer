@@ -26,7 +26,7 @@ func InitializeConsumer() (sarama.Consumer, error) {
 	newConsumer, err := sarama.NewConsumer([]string{KafkaServerAddy}, config)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to create consumer group", err)
+		return nil, fmt.Errorf("failed to create consumer group: %v", err)
 	}
 
 	return newConsumer, nil

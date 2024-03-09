@@ -23,7 +23,7 @@ func SendMessage(token string, spName string, date string) (string, error) {
 	opt := option.WithCredentialsFile(os.Getenv("ADMIN_SDK_KEY"))
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
-		log.Println("error initializing app: %v", err)
+		log.Printf("error initializing app: %v", err)
 	}
 
 	fcmApp, err := app.Messaging(context.Background())
