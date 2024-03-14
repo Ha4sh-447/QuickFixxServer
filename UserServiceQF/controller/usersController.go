@@ -130,19 +130,17 @@ func (u *UserCont) UpdateUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, dto.Response{Message: "User updated successfully"})
 }
 
-// func (u *UserCont) CreateUserOrderHandler(producer sarama.SyncProducer, userorder models.UserOrderProd) gin.HandlerFunc {
-// 	return func(ctx *gin.Context) {
+func (u *UserCont) GetByEmail(ctx *gin.Context) {
+	email := ctx.Query("email")
 
-// 		err := kafka.SendKafkaMessage(producer, userorder)
+	user, err := u.Repo.GetUserByEmail(email)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, dto.Error{Code: -1, Message: err.Error()})
+		return
+	}
 
-// 		if err != nil {
-// 			ctx.JSON(http.StatusNotFound, err)
-// 			return
-// 		}
-
-// 		ctx.JSON(http.StatusOK, gin.H{"message": "Message sent"})
-// 	}
-// }
+	ctx.JSON(http.StatusOK, user)
+}
 
 func (u *UserCont) PostOrder(ctx *gin.Context) {
 	var userorder models.UserOrderProd

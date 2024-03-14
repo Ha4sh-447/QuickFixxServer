@@ -81,13 +81,13 @@ func main() {
 	// }
 
 	r := gin.Default()
-	v1 := r.Group("/api/v1/")
-	user := v1.Group("/users")
+	user := r.Group("/api/users")
 	user.GET("/", uh.GetAllUsers)
+	user.GET("/email", uh.GetByEmail)
 	user.POST("/", uh.CreateUser)
-	// user.POST(("/send"), uh.CreateUserOrderHandler(producer, order))
 	user.POST(("/send"), uh.PostOrder)
 	user.DELETE("/:id", uh.DeleteUser)
+	user.GET("/:id", uh.GetUserById)
 	user.PUT("/:id", uh.UpdateUser)
 
 	srv := &http.Server{

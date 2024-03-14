@@ -97,6 +97,19 @@ func (r *Repo) UpdateUsr(user *models.Users) error {
 	return nil
 }
 
+func (r *Repo) GetUserByEmail(email string) (*models.Users, error) {
+	tx := r.repo.MustBegin()
+	var user models.Users
+
+	err := tx.Get(&user, "SELECT * FROM t_usersdb WHERE email=?", email)
+	if err != nil {
+		log.Println("ERROR", err)
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 func (r *Repo) GetSpDetails(spId int32, field string) (*models.ServiceProd, error) {
 
 	var table string
