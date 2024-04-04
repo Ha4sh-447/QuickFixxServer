@@ -55,4 +55,10 @@ public class CarpenterService implements ServiceImpl {
         List<Carpenter> carpenterList = carpenterRepo.findAllByName(name).stream().toList();
         return carpenterList;
     }
+
+    @Override
+    public List<Carpenter> getByField(String field){
+        List<Carpenter> carpenterList = carpenterRepo.findByField(field);
+        return carpenterList;
+    }
 }

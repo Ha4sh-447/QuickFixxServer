@@ -12,4 +12,5 @@ public interface ServiceImpl {
     Carpenter createCarpenter(CarpenterDto plumberDto);
     Carpenter delete(long id);
     List<Carpenter> getByName(String name);
+    public List<Carpenter> getByField(String field);
 }

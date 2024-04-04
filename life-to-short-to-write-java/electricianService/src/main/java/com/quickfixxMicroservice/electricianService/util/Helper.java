@@ -7,10 +7,10 @@ public class Helper {
     public ElectricianDto electricianToDto(Electrician ec){
         ElectricianDto dto = new ElectricianDto();
         dto.setAddress(ec.getAddress());
-        dto.setId(ec.getId());
+        dto.setElecid(ec.getId());
         dto.setName(ec.getName());
         dto.setContact(ec.getContact());
-        dto.setLocation(ec.getLocation());
+//        dto.setLocation(ec.getLocation());
         dto.setExperience(ec.getExperience());
         dto.setQualification(ec.getQualification());
 
@@ -20,10 +20,10 @@ public class Helper {
     public Electrician dtoToElectrician(ElectricianDto electricianDto){
         Electrician electrician = new Electrician();
         electrician.setAddress(electricianDto.getAddress());
-        electrician.setId(electricianDto.getId());
+        electrician.setId(electricianDto.getUserid());
         electrician.setName(electricianDto.getName());
         electrician.setContact(electricianDto.getContact());
-        electrician.setLocation(electricianDto.getLocation());
+//        electrician.setLocation(electricianDto.getLocation());
         electrician.setExperience(electricianDto.getExperience());
         electrician.setQualification(electricianDto.getQualification());
 

@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface PlumberRepo extends JpaRepository<Plumber, Long> {
     List<Plumber> findAllByName(String name);
+    List<Plumber> findByField(String field);
 }

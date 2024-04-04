@@ -1,7 +1,7 @@
 package messaging
 
 import (
-	"OrderServiceQF/models"
+	"OrderServiceQF/types"
 	"fmt"
 	"log"
 	"os"
@@ -12,7 +12,7 @@ import (
 	// "github.com/kevinburke/twilio-go"
 )
 
-func TwilioServeSms(orderProto *models.KafkaMsg) error {
+func TwilioServeSms(orderProto *types.KafkaMsg) error {
 	err := godotenv.Load("./secret/.env")
 	if err != nil {
 		log.Println("ENVFILE", err)

@@ -50,4 +50,10 @@ public class PlumberService implements ServiceInterface{
         List<Plumber> plumberList = plumberRepo.findAllByName(name).stream().toList();
         return plumberList;
     }
+
+    @Override
+    public List<Plumber> getByField(String field) {
+        List<Plumber> plumberList = plumberRepo.findByField(field);
+        return plumberList;
+    }
 }

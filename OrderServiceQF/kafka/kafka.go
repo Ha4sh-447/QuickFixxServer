@@ -2,7 +2,7 @@ package kafka
 
 import (
 	"OrderServiceQF/messaging"
-	"OrderServiceQF/models"
+	"OrderServiceQF/types"
 	"context"
 	"fmt"
 	"log"
@@ -32,7 +32,7 @@ func InitializeConsumer() (sarama.Consumer, error) {
 	return newConsumer, nil
 }
 
-func SetupConsumerGroup(ctx context.Context, order models.UserOrderProd) {
+func SetupConsumerGroup(ctx context.Context, order types.UserOrderProd) {
 	consumer, err := InitializeConsumer()
 	if err != nil {
 		log.Println("Error initalizing consumer", err)
@@ -58,7 +58,7 @@ func SetupConsumerGroup(ctx context.Context, order models.UserOrderProd) {
 		case msg := <-partionConsumer.Messages():
 			// kafka dm's me
 			log.Println("Received message:", string(msg.Key), string(msg.Value))
-			var order models.KafkaMsg
+			var order types.KafkaMsg
 			if err := json.Unmarshal(msg.Value, &order); err != nil {
 				log.Println("ERROR DECODING MESSAGE", err)
 			}
@@ -66,7 +66,7 @@ func SetupConsumerGroup(ctx context.Context, order models.UserOrderProd) {
 			if err != nil {
 				log.Println("TWILIO ERROR", err)
 			}
-			messaging.SendMessage("", string(order.Name), string(order.DateOrdered))
+			messaging.SendMessage("", string(order.Shopname), string(order.DateOrdered))
 		}
 	}
 }

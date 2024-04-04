@@ -10,12 +10,16 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ElectricianDto {
-    private Long id;
+    private Long userid;
+    private Long elecid;
     private String name;
     private Long contact;
-    private String location;
+//    private String location;
     private String address;
     private String experience;
+    private String specialization;
     private List<String> qualification;
     private float rating;
+    private String shopname;
+    private String image;
 }

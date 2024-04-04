@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"OrderServiceQF/dtos"
 	"OrderServiceQF/repository"
+	"OrderServiceQF/types"
 	"fmt"
 	"log"
 	"net/http"
@@ -32,7 +32,7 @@ func (c *Controller) GetAll(e echo.Context) error {
 }
 
 func (c *Controller) PlaceOrder(e echo.Context) error {
-	dto := dtos.OrdersDto{}
+	dto := types.OrdersDto{}
 	if err := e.Bind(&dto); err != nil {
 		log.Printf("\nERROR", err)
 		e.JSON(http.StatusPartialContent, "Can't decode json")

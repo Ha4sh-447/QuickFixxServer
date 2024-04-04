@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"esModuleInterop": true,
+		"outDir": "./dist",
+		"forceConsistentCasingInFileNames": true,
+		"declaration": true,
+		"declarationMap": true,
+		"isolatedModules": true,
+		"lib": ["es2022", "DOM", "DOM.Iterable"],
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"target": "ES2022"
+	},
+	"include": ["index.ts"],
+	"exclude": ["node_modules", "dist"]
+}

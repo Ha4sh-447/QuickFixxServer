@@ -12,4 +12,5 @@ public interface ServiceInterface {
     Plumber createPlumber(PlumberDto plumberDto);
     Plumber delete(long id);
     List<Plumber> getByName(String name);
+    public List<Plumber> getByField(String field);
 }

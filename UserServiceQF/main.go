@@ -71,21 +71,12 @@ func main() {
 		port = ":9000"
 	}
 
-	// order := models.UserOrderProd{
-	// 	UserId:      7,
-	// 	ServiceId:   1,
-	// 	Field:       "Electrician",
-	// 	OrderId:     "order_1111",
-	// 	DateOrdered: "02/03/2024",
-	// 	Status:      0,
-	// }
-
 	r := gin.Default()
 	user := r.Group("/api/users")
 	user.GET("/", uh.GetAllUsers)
 	user.GET("/email", uh.GetByEmail)
 	user.POST("/", uh.CreateUser)
-	user.POST(("/send"), uh.PostOrder)
+	user.POST("/send", uh.PostOrder)
 	user.DELETE("/:id", uh.DeleteUser)
 	user.GET("/:id", uh.GetUserById)
 	user.PUT("/:id", uh.UpdateUser)

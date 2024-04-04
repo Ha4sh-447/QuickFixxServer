@@ -4,6 +4,9 @@ import com.quickfixxMicroservices.PlumberService.dto.PlumberDto;
 import com.quickfixxMicroservices.PlumberService.model.Plumber;
 import com.quickfixxMicroservices.PlumberService.service.PlumberService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class Controller {
     private final PlumberService plumberService;
+    @Autowired
+    ModelMapper modelMapper = new ModelMapper();
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -46,6 +51,16 @@ public class Controller {
     @ResponseStatus(HttpStatus.OK)
     public List<Plumber> getByName(@PathVariable("name") String name){
         return plumberService.getByName(name);
+    }
+
+    @GetMapping("/{field}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PlumberDto> getByField(@PathVariable("field") String field){
+        List<PlumberDto> plumberDtoList = plumberService.getByField(field).stream()
+                .map(plumber -> modelMapper.map(plumber, PlumberDto.class))
+                .toList();
+
+        return plumberDtoList;
     }
 
 }

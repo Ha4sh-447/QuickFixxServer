@@ -27,4 +27,6 @@ public class Carpenter {
     @Column(name = "experience")
     private String experience;
     private List<String> qualification;
+    private String specialization;
+    private int rating;
 }

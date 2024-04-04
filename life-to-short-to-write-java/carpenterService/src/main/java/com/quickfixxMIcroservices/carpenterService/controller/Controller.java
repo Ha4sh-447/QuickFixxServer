@@ -4,8 +4,9 @@ import com.quickfixxMIcroservices.carpenterService.dto.CarpenterDto;
 import com.quickfixxMIcroservices.carpenterService.model.Carpenter;
 import com.quickfixxMIcroservices.carpenterService.service.CarpenterService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +16,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class Controller {
     private final CarpenterService carpenterService;
+
+    @Autowired
+    ModelMapper mapper = new ModelMapper();
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -48,5 +52,13 @@ public class Controller {
         return carpenterService.getByName(name);
     }
 
+    @GetMapping("/{field}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CarpenterDto> getByField(@PathVariable("field") String field){
+        List<CarpenterDto> carpenterDtos = carpenterService.getByField(field).stream()
+                .map(carpenter -> mapper.map(carpenter, CarpenterDto.class))
+                .toList();
 
+        return carpenterDtos;
+    }
 }

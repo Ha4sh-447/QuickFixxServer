@@ -1,14 +1,13 @@
 package models
 
 type ServiceProd struct {
-	Id            int     `json:"id"`
-	Address       string  `json:"address"`
-	Contact       string  `json:"contact"`
-	Name          string  `json:"name"`
-	Experience    string  `json:"experience"`
-	Qualification []uint8 `json:"qualification"`
-	// Qualification  interface{} `json:"qualification"`
-	Location       string `json:"location"`
-	Rating         int    `json:"rating"`
-	Specialization string `json:"specialization"`
+	Address        string  `json:"address"`
+	Specialization string  `json:"specialization"`
+	Eid            int     `json:"eid"`
+	Specz          string  `json:"specz"`
+	Rating         float32 `json:"rating"`
+	Experience     string  `json:"experience"`
+	U_id           int     `json:"u_id"`
+	Shopname       string  `json:"shopname"`
+	Contact        string  `json:"contact"`
 }

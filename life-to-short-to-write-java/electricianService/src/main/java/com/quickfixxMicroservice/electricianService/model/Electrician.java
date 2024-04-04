@@ -6,8 +6,8 @@ import lombok.*;
 
 import java.util.List;
 
-@Entity
-@Table(name = "t_electricianDB")
+//@Entity
+//@Table(name = "t_electricianDB")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -24,5 +24,7 @@ public class Electrician {
     @Column(name = "experience")
     private String experience;
     private List<String> qualification;
+    private String specialization;
     private int rating;
 }
+

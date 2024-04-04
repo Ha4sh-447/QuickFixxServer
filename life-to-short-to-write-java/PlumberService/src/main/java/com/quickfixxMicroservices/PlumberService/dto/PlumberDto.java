@@ -19,4 +19,6 @@ public class PlumberDto {
     private String address;
     private String experience;
     private List<String> qualification;
+    private String field;
+    private int rating;
 }

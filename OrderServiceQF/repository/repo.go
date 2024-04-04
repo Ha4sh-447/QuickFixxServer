@@ -1,8 +1,7 @@
 package repository
 
 import (
-	"OrderServiceQF/dtos"
-	"OrderServiceQF/models"
+	"OrderServiceQF/types"
 	"log"
 
 	"github.com/jmoiron/sqlx"
@@ -18,10 +17,10 @@ func NewRepo(db *sqlx.DB) *Repo {
 	}
 }
 
-func (r *Repo) GetAllOrders() (*[]dtos.OrdersDto, error) {
+func (r *Repo) GetAllOrders() (*[]types.OrdersDto, error) {
 
-	var orders []models.Orders
-	var ordersDto []dtos.OrdersDto
+	var orders []types.Orders
+	var ordersDto []types.OrdersDto
 	err := r.Select(&orders, "SELECT id, orderid, userid, serviceid, field, dateordered, status FROM orders")
 	log.Println("HELLO")
 
@@ -31,17 +30,17 @@ func (r *Repo) GetAllOrders() (*[]dtos.OrdersDto, error) {
 	}
 
 	// Initialize ordersDto slice with the same length as orders slice
-	ordersDto = make([]dtos.OrdersDto, len(orders))
+	ordersDto = make([]types.OrdersDto, len(orders))
 
 	for i, order := range orders {
 		log.Println("ORDERS", order.OrderId)
-		ordersDto[i] = dtos.OrderToDto(&order)
+		ordersDto[i] = types.OrderToDto(&order)
 	}
 
 	return &ordersDto, nil
 }
 
-func (r *Repo) CreateOrder(odto *dtos.OrdersDto) (string, error) {
+func (r *Repo) CreateOrder(odto *types.OrdersDto) (string, error) {
 	tx := r.MustBegin()
 	_, err := tx.Exec("INSERT INTO ORDERS(ORDERID, USERID, SERVICEID, FIELD, DATEORDERED, STATUS) VALUES(?, ?, ? , ? , ?, ?)", odto.OrderId, odto.UserId, odto.ServiceId, odto.Field, odto.DateOrdered, odto.Status)
 	log.Println("CREATE ORDER", odto.OrderId)
@@ -58,10 +57,10 @@ func (r *Repo) CreateOrder(odto *dtos.OrdersDto) (string, error) {
 	return odto.OrderId, nil
 }
 
-func (r *Repo) GetOrderByUserId(userid string) (*[]dtos.OrdersDto, error) {
+func (r *Repo) GetOrderByUserId(userid string) (*[]types.OrdersDto, error) {
 	tx := r.MustBegin()
-	var ordersDto []dtos.OrdersDto
-	var orders []models.Orders
+	var ordersDto []types.OrdersDto
+	var orders []types.Orders
 	err := tx.Select(&orders, "SELECT id, orderid, userid, serviceid, field, dateordered, status FROM orders WHERE userid=?", userid)
 
 	if err != nil {
@@ -69,11 +68,11 @@ func (r *Repo) GetOrderByUserId(userid string) (*[]dtos.OrdersDto, error) {
 		return nil, err
 	}
 
-	ordersDto = make([]dtos.OrdersDto, len(orders))
+	ordersDto = make([]types.OrdersDto, len(orders))
 
 	for i, order := range orders {
 		log.Println("ORDERS", order.OrderId)
-		ordersDto[i] = dtos.OrderToDto(&order)
+		ordersDto[i] = types.OrderToDto(&order)
 	}
 
 	return &ordersDto, nil

@@ -27,4 +27,6 @@ public class Plumber {
     @Column(name = "experience")
     private String experience;
     private List<String> qualification;
+    private String field;
+    private int rating;
 }

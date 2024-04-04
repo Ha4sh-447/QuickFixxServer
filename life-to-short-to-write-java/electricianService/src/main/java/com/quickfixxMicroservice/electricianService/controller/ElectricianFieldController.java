@@ -1,9 +1,10 @@
 package com.quickfixxMicroservice.electricianService.controller;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.quickfixxMicroservice.electricianService.dto.ElectricanWithUserDto;
 import com.quickfixxMicroservice.electricianService.dto.ElectricianDto;
-import com.quickfixxMicroservice.electricianService.model.Electrician;
+import com.quickfixxMicroservice.electricianService.model.ElectricianSP;
+import com.quickfixxMicroservice.electricianService.model.Users;
 import com.quickfixxMicroservice.electricianService.service.ElectricianService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/electrician")
@@ -27,7 +29,8 @@ public class ElectricianFieldController {
     private final ElectricianService electricianService;
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String createElectrician(@RequestBody ElectricianDto electricianDto){
+    public String createElectrician(@RequestBody ElectricianSP electricianDto){
+        System.out.println(electricianDto.getUId()+ " "+ electricianDto.getExperience()+" "+ electricianDto.getRating()+" "+electricianDto.getAddress()+" "+electricianDto.getEID());
         electricianService.createElectrician(electricianDto);
         return "Electrician registered";
     }
@@ -35,30 +38,97 @@ public class ElectricianFieldController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<ElectricianDto> getALl(){
-        List<ElectricianDto> electricianList = electricianService.getAllElectrician().stream()
-                .map(electrician -> modelMapper.map(electrician, ElectricianDto.class))
-                .toList();
+        List<Object[]> electricianAndUserList = electricianService.getAllElectriciansWithUsers();
 
+        List<ElectricianDto> electricianDtoList = electricianAndUserList.stream().map(objects -> {
+            ElectricianSP electrician = (ElectricianSP) objects[0];
+            Users user = (Users) objects[1];
 
-        electricianList.stream().map(electrician -> {
-            System.out.println(electrician.getId() + " "+ electrician.getName() + electrician.getRating());
-            return null;
-        }).toList();
+            ElectricianDto electricianDto = new ElectricianDto();
+            electricianDto.setUserid((long) user.getId());
+            electricianDto.setElecid(electrician.getEID());
+            electricianDto.setName(electrician.getShopname());
+            // Assuming contact and location are fields from User entity
+            electricianDto.setContact(Long.valueOf(user.getContact()));
+//            electricianDto.setLocation(user.getLocation());
+            electricianDto.setAddress(electrician.getAddress());
+            electricianDto.setExperience(electrician.getExperience());
+            electricianDto.setSpecialization(electrician.getSpecz());
+            // Assuming qualification is not available in the current data
+            electricianDto.setQualification(null);
+            electricianDto.setRating(electrician.getRating());
+            electricianDto.setShopname(electrician.getShopname());
+            electricianDto.setImage(user.getImage());
+            return electricianDto;
+        }).collect(Collectors.toList());
 
+        if (electricianDtoList.isEmpty()) {
+            System.out.println("No data found");
+        }
 
+        return electricianDtoList;
+    }
 
-        if(electricianList.isEmpty()) System.out.println("No data found");
-        return electricianList;
+    @GetMapping("/field/{field}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ElectricianDto>getElectricianByField(@PathVariable("field") String field){
+//        List<ElectricianDto> dto = electricianService.getByspecialization(field).stream()
+//                .map(electrician -> modelMapper.map(electrician, ElectricianDto.class))
+//                .toList();
+        List<Object[]>byFieldList = electricianService.getByspecialization(field);
+
+        List<ElectricianDto> electricianDtoList = byFieldList.stream().map(objects -> {
+            ElectricianSP electrician = (ElectricianSP) objects[0];
+            Users user = (Users) objects[1];
+
+            ElectricianDto electricianDto = new ElectricianDto();
+            electricianDto.setUserid((long) user.getId());
+            electricianDto.setElecid(electrician.getEID());
+            electricianDto.setName(user.getName());
+            // Assuming contact and location are fields from User entity
+            electricianDto.setContact(Long.valueOf(user.getContact()));
+//            electricianDto.setLocation(user.getLocation());
+            electricianDto.setAddress(electrician.getAddress());
+            electricianDto.setExperience(electrician.getExperience());
+            electricianDto.setSpecialization(electrician.getSpecz());
+            // Assuming qualification is not available in the current data
+            electricianDto.setQualification(null);
+            electricianDto.setRating(electrician.getRating());
+
+            return electricianDto;
+        }).collect(Collectors.toList());
+
+        if (electricianDtoList.isEmpty()) {
+            System.out.println("No data found");
+        }
+
+        return electricianDtoList;
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Optional<Electrician> getByID(@PathVariable("id") String idString){
+    public Optional<ElectricianDto> getByID(@PathVariable("id") String idString){
         Long id= Long.parseLong(idString);
-        Optional<Electrician> optionalElectrician = electricianService.getByID(id);
+        Optional<ElectricanWithUserDto> optionalElectrician = electricianService.getByID(id);
+
+        Users user = optionalElectrician.get().getUser();
+        ElectricianSP electrician = optionalElectrician.get().getElectrician();
+
+        ElectricianDto electricianDto = new ElectricianDto();
+        electricianDto.setUserid((long) user.getId());
+        electricianDto.setElecid(electrician.getEID());
+        electricianDto.setName(user.getName());
+        electricianDto.setContact(Long.valueOf(user.getContact()));
+        electricianDto.setAddress(electrician.getAddress());
+        electricianDto.setExperience(electrician.getExperience());
+        electricianDto.setSpecialization(electrician.getSpecz());
+        electricianDto.setQualification(null);
+        electricianDto.setRating(electrician.getRating());
+        electricianDto.setShopname(electrician.getShopname());
+        electricianDto.setImage(user.getImage());
 
         if(optionalElectrician.isPresent()){
-            return electricianService.getByID((id));
+            return Optional.of(electricianDto);
         }else {
             return null;
         }

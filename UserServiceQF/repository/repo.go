@@ -81,9 +81,9 @@ func (r *Repo) DeleteUsr(id string) error {
 func (r *Repo) UpdateUsr(user *models.Users) error {
 	// Start a new transaction
 	tx := r.repo.MustBegin()
-
-	_, err := tx.Exec("UPDATE T_USERSDB SET name=$1, contact=$2, email=$3, password=$4, img=$5 WHERE id=$6",
-		user.Name, user.Contact, user.Email, user.Password, user.Image, user.Id)
+	log.Println("UPDATE_USER_REPO", user)
+	_, err := tx.Exec("UPDATE T_USERSDB SET name=?, contact=?, email=?, password=? WHERE id=?",
+		user.Name, user.Contact, user.Email, user.Password, user.Id)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -117,7 +117,7 @@ func (r *Repo) GetSpDetails(spId int32, field string) (*models.ServiceProd, erro
 	switch field {
 	case "electrician":
 		// port = "8080"
-		table = "t_electriciandb"
+		table = "t_electriciandb_2"
 	case "plumber":
 		// port = "8083"
 		table = "t_plumbers"
@@ -136,27 +136,30 @@ func (r *Repo) GetSpDetails(spId int32, field string) (*models.ServiceProd, erro
 	defer tx.Rollback()
 	log.Println("INPUTS", spId, field)
 	var sp models.ServiceProd
-	query := fmt.Sprintf("SELECT * FROM %s WHERE id=?", table)
+	query := fmt.Sprintf("SELECT * FROM %s WHERE eid=?", table)
 
 	err := tx.Get(&sp, query, spId)
 	log.Println("SP DETAILS", sp)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 
 	return &sp, nil
 }
 
-func (r *Repo) GetUserNameById(id int32) (string, error) {
+func (r *Repo) GetUserContactById(id int32) (string, string, error) {
 	tx := r.repo.MustBegin()
 
-	result := tx.QueryRow("SELECT name FROM t_usersdb WHERE id=?", id)
+	result := tx.QueryRow("SELECT name,contact FROM t_usersdb WHERE id=?", id)
+	var contact string
 	var name string
-	err := result.Scan(&name)
+	err := result.Scan(&name, &contact)
+	log.Println(contact + " " + name)
 	if err != nil {
 		log.Println(err)
-		return "", err
+		return "", "", err
 	}
 
-	return name, nil
+	return name, contact, nil
 }

@@ -100,10 +100,8 @@ func (u *UserCont) CreateUser(ctx *gin.Context) {
 }
 
 func (u *UserCont) UpdateUser(ctx *gin.Context) {
-	// Retrieve user ID from request parameters
 	id := ctx.Params.ByName("id")
 
-	// Parse request body to extract updated user data
 	var usrdto dto.UserDto
 	if err := ctx.ShouldBindJSON(&usrdto); err != nil {
 		ctx.JSON(http.StatusBadRequest, dto.Error{Code: -1, Message: "Invalid request body"})
@@ -111,9 +109,8 @@ func (u *UserCont) UpdateUser(ctx *gin.Context) {
 	}
 	uid, _ := strconv.Atoi(id)
 	fmt.Println(uid)
-	// Create a new user entity with the updated data
 	user := models.Users{
-		Id:       uid, // Assuming the ID is included in the DTO or retrieved from somewhere else
+		Id:       uid,
 		Name:     usrdto.Name,
 		Contact:  usrdto.Contact,
 		Email:    usrdto.Email,
@@ -123,6 +120,7 @@ func (u *UserCont) UpdateUser(ctx *gin.Context) {
 
 	// Update the user in the database
 	if err := u.UpdateUsr(&user); err != nil {
+		log.Println("UPDATE_USER_ERROR", err)
 		ctx.JSON(http.StatusInternalServerError, dto.Error{Code: -1, Message: "Failed to update user"})
 		return
 	}
@@ -145,6 +143,7 @@ func (u *UserCont) GetByEmail(ctx *gin.Context) {
 func (u *UserCont) PostOrder(ctx *gin.Context) {
 	var userorder models.UserOrderProd
 	if err := ctx.ShouldBindJSON(&userorder); err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, dto.Error{Code: -1, Message: "Invalid request body"})
 		return
 	}
@@ -153,6 +152,7 @@ func (u *UserCont) PostOrder(ctx *gin.Context) {
 	type Result struct {
 		SP       *models.ServiceProd
 		Username string
+		Contact  string
 		Err      error
 	}
 	resultCh := make(chan Result, 2) // Buffer for 2 results
@@ -163,13 +163,14 @@ func (u *UserCont) PostOrder(ctx *gin.Context) {
 	}()
 
 	go func() {
-		username, err := u.Repo.GetUserNameById(int32(userorder.UserId))
-		resultCh <- Result{Username: username, Err: err}
+		username, contact, err := u.Repo.GetUserContactById(int32(userorder.UserId))
+		resultCh <- Result{Username: username, Contact: contact, Err: err}
 	}()
 
 	// Wait for both results
 	var sp *models.ServiceProd
 	var username string
+	var contact string
 	for i := 0; i < 2; i++ {
 		result := <-resultCh
 		if result.Err != nil {
@@ -182,12 +183,16 @@ func (u *UserCont) PostOrder(ctx *gin.Context) {
 		if result.Username != "" {
 			username = result.Username
 		}
+		if result.Contact != "" {
+			contact = result.Contact
+		}
 	}
 
 	kafkaOrder := models.KafkaMsg{
 		UserOrderProd: userorder,
 		ServiceProd:   *sp,
 		Username:      username,
+		Contact:       contact,
 	}
 
 	err := kafka.SendKafkaMessage(*u.producer, kafkaOrder)
