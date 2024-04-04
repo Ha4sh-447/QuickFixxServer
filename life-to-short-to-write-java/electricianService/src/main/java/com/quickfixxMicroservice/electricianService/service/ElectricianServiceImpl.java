@@ -28,10 +28,6 @@ public class ElectricianServiceImpl implements ElectricianService{
     @Override
     public List<ElectricianSP> getAllElectrician() {
         List<ElectricianSP> electricianList = electricainRepo.findAll().stream().toList();
-        for (ElectricianSP ele:
-             electricianList) {
-//            System.out.println(ele.getId() + " " + ele.getName());
-        }
         return electricianList;
     }
 

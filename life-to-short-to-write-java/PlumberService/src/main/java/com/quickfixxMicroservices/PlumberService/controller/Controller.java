@@ -6,7 +6,6 @@ import com.quickfixxMicroservices.PlumberService.service.PlumberService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 

@@ -5,7 +5,6 @@ import com.quickfixxMIcroservices.carpenterService.dto.CarpenterDto;
 import com.quickfixxMIcroservices.carpenterService.model.Carpenter;
 import com.quickfixxMIcroservices.carpenterService.repository.CarpenterRepo;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.model.PreparableMutationOperation;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,7 +23,7 @@ public class CarpenterService implements ServiceImpl {
 
     @Override
     public Carpenter getById(long id) {
-        Carpenter carpenter = carpenterRepo.getById(id);
+        Carpenter carpenter = carpenterRepo.getReferenceById(id);
         return carpenter;
     }
 

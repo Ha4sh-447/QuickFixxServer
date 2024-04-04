@@ -1,9 +1,6 @@
 package com.quickfixxMicroservices.PlumberService.dto;
 
-
-import jakarta.persistence.Column;
 import lombok.*;
-
 import java.util.List;
 
 @Getter

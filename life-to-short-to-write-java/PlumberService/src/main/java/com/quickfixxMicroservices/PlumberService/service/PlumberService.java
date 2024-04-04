@@ -20,7 +20,7 @@ public class PlumberService implements ServiceInterface{
 
     @Override
     public Plumber getById(long id) {
-        return plumberRepo.getById(id);
+        return plumberRepo.getReferenceById(id);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class PlumberService implements ServiceInterface{
 
     @Override
     public Plumber delete(long id) {
-        Plumber plumber = plumberRepo.getById(id);
+        Plumber plumber = plumberRepo.getReferenceById(id);
         plumberRepo.delete(plumber);
         return plumber;
     }
