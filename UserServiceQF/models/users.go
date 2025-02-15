@@ -7,7 +7,7 @@ type Users struct {
 	Role     string `json:"role"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
-	Image    string `json:"img"`
+	Image    string `json:"image"`
 }
 
 type UserOrderProd struct {

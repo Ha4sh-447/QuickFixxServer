@@ -29,7 +29,7 @@ func NewDB(sqlConn *sqlx.DB) *DB {
 }
 
 func CreateTable(db *sqlx.DB) error {
-	schema := `CREATE TABLE IF NOT EXISTS t_usersdb(
+	schema := `CREATE TABLE IF NOT EXISTS t_tutors(
 	 	id INT AUTO_INCREMENT PRIMARY KEY,
 		name VARCHAR(100) NOT NULL,
 		contact VARCHAR(50) NOT NULL,
@@ -37,11 +37,14 @@ func CreateTable(db *sqlx.DB) error {
 		email VARCHAR(100) UNIQUE NOT NULL,
 		password TEXT NOT NULL,
 		image TEXT
+		subject VARCHAR(30) NOT NULL,
+		rating INT,
+		fees INT NOT NULL
 	)`
 
 	_, err := db.Exec(schema)
 	if err != nil {
-		logr.Errorf("Error creating users table %v", err)
+		logr.Errorf("Error creating tutors table %v", err)
 		return err
 	}
 

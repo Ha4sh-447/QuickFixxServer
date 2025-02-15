@@ -75,7 +75,7 @@ func (u *UserCont) DeleteUser(ctx *gin.Context) {
 	id := ctx.Params.ByName("id")
 	err := u.DeleteUsr(id)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, dto.Error{-1, err.Error()})
+		ctx.JSON(http.StatusInternalServerError, dto.Error{Code: -1, Message: err.Error()})
 		return
 	}
 	ctx.JSON(http.StatusOK, dto.Response{Message: fmt.Sprintf("User %s deleted", id)})

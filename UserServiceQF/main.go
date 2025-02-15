@@ -49,6 +49,7 @@ func main() {
 		DBName:   os.Getenv("DB_NAME"),
 	}
 	fmt.Println("SERVER")
+	fmt.Println(os.Getenv("DB_PASS	"))
 
 	producer, err := kafka.SetupProducer()
 	if err != nil {
@@ -107,49 +108,3 @@ func main() {
 	}
 	log.Println("Server exiting")
 }
-
-//s := http.Server{
-//	Addr:                         ":9090",
-//	Handler:                      r,
-//	DisableGeneralOptionsHandler: false,
-//	TLSConfig:                    nil,
-//	ReadTimeout:                  5 * time.Second,
-//	ReadHeaderTimeout:            0,
-//	WriteTimeout:                 10 * time.Second,
-//	IdleTimeout:                  120 * time.Second,
-//	MaxHeaderBytes:               0,
-//	TLSNextProto:                 nil,
-//	ConnState:                    nil,
-//	ErrorLog:                     l,
-//	BaseContext:                  nil,
-//	ConnContext:                  nil,
-//}
-//
-////	to implement
-////listening to server
-////gracefully shutting down
-//
-////listenAndServe going to block the code from proceeding further, so put it in a coroutine
-//go func() {
-//	l.Println("Starting server on port 9090.")
-//	err := s.ListenAndServe()
-//	if err != nil {
-//		l.Printf("Error listening server: %s\n", err)
-//		os.Exit(1)
-//	}
-//}()
-//
-////	Graceful shutdown
-////	trap the signature and then shutdown server
-//c := make(chan os.Signal, 1)
-//signal.Notify(c, os.Interrupt)
-//signal.Notify(c, os.Kill)
-//
-////	Block this part until the signal is recieved, only then proceed further
-//sig := <-c
-//l.Println("Got signal: ", sig)
-//l.Println("SERVER CLOSED")
-//
-//// gracefully shutdown the server, waiting max 30 seconds for current operations to complete
-//ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
-//s.Shutdown(ctx)

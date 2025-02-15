@@ -49,11 +49,13 @@ func (r *Repo) AddUsr(usr *dto.UserDto) error {
 	logr.Debugf("Added user: Name=%s, Role=%s, Contact=%s, Email=%s, Image=%s\n", usr.Name, usr.Role, usr.Contact, usr.Email, usr.Image)
 	if err != nil {
 		tx.Rollback()
+		log.Println(err)
 		return err
 	}
 
 	err = tx.Commit()
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
